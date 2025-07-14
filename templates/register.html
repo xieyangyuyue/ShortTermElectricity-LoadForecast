@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注册 - 用户中心</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f4f4f9;
+      }
+      .container {
+        max-width: 400px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        color: #333;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="password"],
+      input[type="email"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0b7dda;
+      }
+      .error {
+        color: #ff0000;
+        margin-bottom: 10px;
+      }
+      .success {
+        color: #008000;
+        margin-bottom: 10px;
+      }
+      .errors {
+        margin-bottom: 15px;
+      }
+      .errors ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+      .errors li {
+        color: #ff0000;
+        margin-bottom: 5px;
+      }
+      .links {
+        text-align: center;
+        margin-top: 15px;
+      }
+      .links a {
+        color: #2196f3;
+        text-decoration: none;
+      }
+      .links a:hover {
+        text-decoration: underline;
+      }
+      .loading {
+        display: none;
+        text-align: center;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>用户注册</h2>
+      <div id="message-container"></div>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="username">用户名:</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+        <div class="form-group">
+          <label for="password">密码:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <div class="form-group">
+          <label for="email">邮箱:</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="loading">
+          <img
+            src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=="
+            alt="加载中"
+          />
+          <p>正在注册...</p>
+        </div>
+        <button type="submit">注册</button>
+      </form>
+      <div class="links">
+        <p>已有账号? <a href="{{ url_for('login') }}">立即登录</a></p>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const registerForm = document.getElementById("register-form");
+        const messageContainer = document.getElementById("message-container");
+        const loading = document.querySelector(".loading");
+
+        registerForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // 清空之前的消息
+          //messageContainer.innerHTML = "";
+
+          // 显示加载状态
+          //loading.style.display = "block";
+
+          // 收集表单数据
+          const formData = new FormData(this);
+          const data = Object.fromEntries(formData.entries());
+
+          // 发送AJAX请求
+          fetch("/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: data.username,
+              password: data.password,
+              email: data.email,
+            }),
+          })
+            .then((response) => {
+              // 隐藏加载状态
+              loading.style.display = "none";
+
+              if (!response.ok) {
+                throw response;
+              }
+              return response.json();
+            })
+            .then((result) => {
+              if (result.success) {
+                // 显示成功消息
+                showMessage(result.message, "success");
+
+                // 延迟后重定向
+                setTimeout(() => {
+                  window.location.href = result.redirect;
+                }, 1000);
+              } else {
+                // 显示错误列表
+                if (result.errors && result.errors.length > 0) {
+                  showErrors(result.errors);
+                } else {
+                  showMessage(result.message || "注册失败", "error");
+                }
+              }
+            })
+            .catch((error) => {
+              error.json().then((errData) => {
+                if (errData.errors && errData.errors.length > 0) {
+                  showErrors(errData.errors);
+                } else {
+                  showMessage(errData.message || "注册请求失败", "error");
+                }
+              });
+            });
+        });
+
+        function showMessage(message, type) {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = type;
+          messageDiv.textContent = message;
+          messageContainer.appendChild(messageDiv);
+        }
+
+        function showErrors(errors) {
+          const errorsDiv = document.createElement("div");
+          errorsDiv.className = "errors";
+
+          const ul = document.createElement("ul");
+          errors.forEach((error) => {
+            const li = document.createElement("li");
+            li.textContent = error;
+            ul.appendChild(li);
+          });
+
+          errorsDiv.appendChild(ul);
+          messageContainer.appendChild(errorsDiv);
+        }
+      });
+    </script>
+  </body>
+</html>

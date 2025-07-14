@@ -1,12 +1,12 @@
 from flask import Flask, render_template_string, request, jsonify, Response
 import requests
 import json
-
+from flask_cors import CORS
 app = Flask(__name__)
 
 # Ollama 服务地址（默认本地）
 OLLAMA_URL = "http://localhost:11434"
-
+CORS(app)
 # 对话历史存储（简单内存存储，重启后清空）
 chat_history = []
 

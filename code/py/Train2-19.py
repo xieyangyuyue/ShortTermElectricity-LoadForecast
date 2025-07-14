@@ -660,7 +660,7 @@ def visualize_ape_distribution(ape_array, title, ylim=None):
 def main():
     # 数据处理
     print("加载并预处理数据...")
-    file_path = 'D:/pythondemo/project-training-2-master/Short-term electricity load forecasting/code/new_data.csv'
+    file_path = 'D:/pythondemo/project-training-2-master/Short-term electricity load forecasting/data/new_data.csv'
     new_data = load_and_preprocess_data(file_path)
 
     # 划分数据集

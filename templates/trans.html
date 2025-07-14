@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>伏特加 平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind 配置 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#165DFF",
+              secondary: "#36CFC9",
+              accent: "#722ED1",
+              dark: "#1D2129",
+              "gray-light": "#F2F3F5",
+              "gray-medium": "#C9CDD4",
+              "gray-dark": "#86909C",
+            },
+            fontFamily: {
+              inter: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+        .sidebar-item-active {
+          @apply bg-primary/10 text-primary border-l-4 border-primary;
+        }
+        .card-hover {
+          @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+        }
+        .btn-primary {
+          @apply bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all;
+        }
+        .btn-secondary {
+          @apply bg-white text-primary border border-primary px-4 py-2 rounded-lg hover:bg-primary/5 transition-all;
+        }
+        .input-focus {
+          @apply focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-inter bg-gray-light min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm">
+      <div
+        class="container mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <i class="fa fa-robot text-primary text-2xl"></i>
+          <h1 class="text-xl font-bold text-dark">伏特加 平台</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="搜索..."
+              class="pl-10 pr-4 py-2 rounded-lg border border-gray-medium input-focus"
+            />
+            <i
+              class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-dark"
+            ></i>
+          </div>
+          <div class="flex items-center space-x-2">
+            <img
+              src="https://picsum.photos/id/1005/200/200"
+              alt="用户头像"
+              class="w-8 h-8 rounded-full object-cover"
+            />
+            <span class="hidden md:inline-block text-sm font-medium"
+              >管理员</span
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+      <!-- 左侧导航栏 -->
+      <aside
+        id="sidebar"
+        class="w-64 bg-white shadow-sm h-[calc(100vh-64px)] fixed left-0 overflow-y-auto transition-all duration-300 ease-in-out transform z-10"
+      >
+        <nav class="py-4">
+          <div class="px-4 mb-4">
+            <h2
+              class="text-xs font-semibold text-gray-dark uppercase tracking-wider"
+            >
+              主导航
+            </h2>
+          </div>
+
+          <a
+            href="{{url_for('dashboard')}}"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-home w-6"></i>
+            <span class="ml-2">首页</span>
+          </a>
+
+          <div class="nav-group">
+            <div
+              class="flex items-center justify-between px-4 py-3 bg-primary/10 text-primary border-l-4 border-primary cursor-pointer group-toggle"
+            >
+              <div class="flex items-center">
+                <i class="fa fa-cogs w-6"></i>
+                <span class="ml-2">模型处理</span>
+              </div>
+              <i
+                class="fa fa-chevron-down text-xs transition-transform duration-300 group-toggle-icon transform rotate-180"
+              ></i>
+            </div>
+
+            <div class="nav-submenu pl-10 py-2">
+              <a
+                href="{{url_for('trans')}}"
+                class="block px-4 py-2 text-sm bg-primary/10 text-primary rounded"
+                >模型训练</a
+              >
+              <a
+                href="{{url_for('ceshi')}}"
+                class="block px-4 py-2 text-sm hover:bg-gray-light rounded"
+                >模型测试</a
+              >
+              <a
+                href="#model-evaluation"
+                class="block px-4 py-2 text-sm hover:bg-gray-light rounded"
+                >模型评估</a
+              >
+            </div>
+          </div>
+
+          <a
+            href="{{url_for('shujuji')}}"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-database w-6"></i>
+            <span class="ml-2">数据集</span>
+          </a>
+
+          <a
+            href="#model-analysis"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-bar-chart w-6"></i>
+            <span class="ml-2">模型分析</span>
+          </a>
+
+          <a
+            href="http://10.136.20.125:3000/"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-comments w-6"></i>
+            <span class="ml-2">AI 对话</span>
+          </a>
+
+          <div class="px-4 pt-6 pb-2 mt-6 border-t border-gray-light">
+            <h2
+              class="text-xs font-semibold text-gray-dark uppercase tracking-wider"
+            >
+              设置
+            </h2>
+          </div>
+
+          <a
+            href="#settings"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-cog w-6"></i>
+            <span class="ml-2">系统设置</span>
+          </a>
+
+          <a
+            href="#help"
+            class="flex items-center px-4 py-3 hover:bg-gray-light"
+          >
+            <i class="fa fa-question-circle w-6"></i>
+            <span class="ml-2">帮助中心</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- 主内容区 -->
+      <main class="flex-1 ml-64 p-6 transition-all duration-300">
+        <!-- 页面标题 -->
+        <div class="mb-6">
+          <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark">
+            模型训练
+          </h1>
+          <p class="text-gray-dark mt-1">配置和训练您的AI模型</p>
+        </div>
+
+        <!-- 模型训练表单 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 选择模型 -->
+            <div class="lg:col-span-1">
+              <h2 class="text-lg font-semibold mb-4">选择模型</h2>
+              <div class="space-y-4">
+                <div
+                  class="bg-gray-light rounded-lg p-4 cursor-pointer border-2 border-primary model-card"
+                  data-model="transformer"
+                >
+                  <div class="flex items-center">
+                    <div
+                      class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4"
+                    >
+                      <i class="fa fa-exchange text-primary text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-medium">Transformer</h3>
+                      <p class="text-sm text-gray-dark">序列到序列模型</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gray-light rounded-lg p-4 cursor-pointer border-2 border-transparent hover:border-primary/30 model-card"
+                  data-model="cnn"
+                >
+                  <div class="flex items-center">
+                    <div
+                      class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4"
+                    >
+                      <i class="fa fa-th text-primary text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-medium">CNN</h3>
+                      <p class="text-sm text-gray-dark">卷积神经网络</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gray-light rounded-lg p-4 cursor-pointer border-2 border-transparent hover:border-primary/30 model-card"
+                  data-model="lstm"
+                >
+                  <div class="flex items-center">
+                    <div
+                      class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4"
+                    >
+                      <i class="fa fa-refresh text-primary text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-medium">LSTM</h3>
+                      <p class="text-sm text-gray-dark">长短期记忆网络</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-gray-light rounded-lg p-4 cursor-pointer border-2 border-transparent hover:border-primary/30 model-card"
+                  data-model="custom"
+                >
+                  <div class="flex items-center">
+                    <div
+                      class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mr-4"
+                    >
+                      <i class="fa fa-code text-primary text-xl"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-medium">自定义模型</h3>
+                      <p class="text-sm text-gray-dark">上传您的模型</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 添加数据集 -->
+            <div class="lg:col-span-1">
+              <h2 class="text-lg font-semibold mb-4">添加数据集</h2>
+              <div class="space-y-4">
+                <div
+                  class="border-2 border-dashed border-gray-medium rounded-lg p-6 text-center hover:border-primary transition-colors"
+                >
+                  <i
+                    class="fa fa-cloud-upload text-3xl text-gray-dark mb-2"
+                  ></i>
+                  <p class="mb-2">上传数据集文件</p>
+                  <p class="text-xs text-gray-dark mb-4">支持CSV, Excel格式</p>
+                  <input type="file" class="hidden" id="datasetFile" />
+                  <label
+                    for="datasetFile"
+                    class="btn-primary inline-block cursor-pointer"
+                  >
+                    选择文件
+                  </label>
+                </div>
+
+                <div>
+                  <p class="text-sm font-medium mb-2">或从已有数据集中选择</p>
+                  <select
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  >
+                    <option value="">选择数据集</option>
+                    <option value="dataset1">负荷预测数据集</option>
+                    <option value="dataset2">图像分类数据集</option>
+                    <option value="dataset3">NLP情感分析数据集</option>
+                    <option value="dataset4">推荐系统数据集</option>
+                  </select>
+                </div>
+
+                <div class="bg-gray-light rounded-lg p-4">
+                  <h3 class="font-medium mb-2">数据集预览</h3>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                      <thead>
+                        <tr>
+                          <th
+                            class="px-3 py-2 text-left text-xs font-medium text-gray-dark uppercase tracking-wider"
+                          >
+                            特征
+                          </th>
+                          <th
+                            class="px-3 py-2 text-left text-xs font-medium text-gray-dark uppercase tracking-wider"
+                          >
+                            类型
+                          </th>
+                          <th
+                            class="px-3 py-2 text-left text-xs font-medium text-gray-dark uppercase tracking-wider"
+                          >
+                            描述
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            value
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            float
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            负荷值
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            temperature
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            float
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            温度
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            humidity
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            float
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            湿度
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            wind_speed
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            float
+                          </td>
+                          <td class="px-3 py-2 whitespace-nowrap text-sm">
+                            风速
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 模型训练参数配置 -->
+            <div class="lg:col-span-1">
+              <h2 class="text-lg font-semibold mb-4">模型训练参数配置</h2>
+              <div class="space-y-4" id="transformerParams">
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >输入序列长度</label
+                  >
+                  <input
+                    type="number"
+                    value="48"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >预测序列长度</label
+                  >
+                  <input
+                    type="number"
+                    value="24"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">批量大小</label>
+                  <input
+                    type="number"
+                    value="64"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >训练轮数 (Epochs)</label
+                  >
+                  <input
+                    type="number"
+                    value="50"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">学习率</label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    value="0.001"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">模型维度</label>
+                  <input
+                    type="number"
+                    value="64"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >注意力头数</label
+                  >
+                  <input
+                    type="number"
+                    value="4"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Transformer层数</label
+                  >
+                  <input
+                    type="number"
+                    value="2"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >前馈网络维度</label
+                  >
+                  <input
+                    type="number"
+                    value="128"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">优化器</label>
+                  <select
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  >
+                    <option value="adam">Adam</option>
+                    <option value="sgd">SGD</option>
+                    <option value="rmsprop">RMSProp</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">损失函数</label>
+                  <select
+                    class="w-full px-4 py-2 rounded-lg border border-gray-medium input-focus"
+                  >
+                    <option value="mse">MSE (均方误差)</option>
+                    <option value="mae">MAE (平均绝对误差)</option>
+                    <option value="cross_entropy">
+                      Cross Entropy (交叉熵)
+                    </option>
+                  </select>
+                </div>
+
+                <button
+                  id="startTraining"
+                  class="btn-primary w-full py-3 mt-4 flex items-center justify-center"
+                >
+                  <i class="fa fa-play mr-2"></i> 开始训练
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 训练进度 -->
+        <div
+          id="trainingProgress"
+          class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden"
+        >
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-semibold">训练进度</h2>
+            <button
+              id="cancelTraining"
+              class="text-red-500 hover:text-red-700 flex items-center"
+            >
+              <i class="fa fa-stop mr-1"></i> 取消
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>总体进度</span>
+                <span id="overallProgressText">0%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  id="overallProgressBar"
+                  class="bg-primary h-2 rounded-full"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span id="currentEpochText">Epoch 1/50</span>
+                <span id="epochProgressText">0%</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  id="epochProgressBar"
+                  class="bg-secondary h-2 rounded-full"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <div
+              class="bg-gray-light rounded-lg p-4 h-64 overflow-y-auto"
+              id="trainingLogs"
+            >
+              <p class="text-sm text-gray-dark">准备训练环境...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 训练结果 -->
+        <div
+          id="trainingResults"
+          class="bg-white rounded-xl shadow-sm p-6 mb-8 hidden"
+        >
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-lg font-semibold">训练结果</h2>
+            <div class="flex space-x-2">
+              <button id="saveModel" class="btn-primary">
+                <i class="fa fa-save mr-1"></i> 保存模型
+              </button>
+              <button id="newTraining" class="btn-secondary">
+                <i class="fa fa-plus mr-1"></i> 新训练
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-base font-medium mb-3">训练指标</h3>
+              <div class="bg-gray-light rounded-lg p-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm text-gray-dark">最终损失值</p>
+                    <p class="text-lg font-semibold">0.0024</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-dark">训练时间</p>
+                    <p class="text-lg font-semibold">8分24秒</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-dark">MSE</p>
+                    <p class="text-lg font-semibold">0.0018</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-dark">RMSE</p>
+                    <p class="text-lg font-semibold">0.042</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-dark">MAE</p>
+                    <p class="text-lg font-semibold">0.031</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-dark">R²</p>
+                    <p class="text-lg font-semibold">0.982</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-base font-medium mb-3">损失曲线</h3>
+              <div class="h-64">
+                <canvas id="lossChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <h3 class="text-base font-medium mb-3">预测结果预览</h3>
+            <div class="h-64">
+              <canvas id="predictionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // 导航菜单折叠功能
+      document.addEventListener("DOMContentLoaded", function () {
+        const groupToggle = document.querySelector(".group-toggle");
+        const submenu = document.querySelector(".nav-submenu");
+        const toggleIcon = document.querySelector(".group-toggle-icon");
+
+        if (groupToggle && submenu && toggleIcon) {
+          groupToggle.addEventListener("click", function () {
+            submenu.classList.toggle("hidden");
+            toggleIcon.classList.toggle("rotate-180");
+          });
+        }
+
+        // 初始化图表
+        const ctx = document.getElementById("trainingChart");
+        if (ctx) {
+          new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: ["1月", "2月", "3月", "4月", "5月", "6月", "7月"],
+              datasets: [
+                {
+                  label: "模型训练数量",
+                  data: [6, 8, 12, 9, 15, 18, 24],
+                  borderColor: "#165DFF",
+                  backgroundColor: "rgba(22, 93, 255, 0.1)",
+                  tension: 0.4,
+                  fill: true,
+                },
+                {
+                  label: "API 调用次数 (千)",
+                  data: [4.2, 5.1, 6.8, 7.5, 9.3, 11.2, 12.5],
+                  borderColor: "#36CFC9",
+                  backgroundColor: "rgba(54, 207, 201, 0.1)",
+                  tension: 0.4,
+                  fill: true,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "top",
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+            },
+          });
+        }
+
+        // 移动端侧边栏切换
+        const sidebarToggle = document.getElementById("sidebarToggle");
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.querySelector("main");
+
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener("click", function () {
+            sidebar.classList.toggle("-translate-x-full");
+            if (window.innerWidth < 1024) {
+              mainContent.classList.toggle("ml-0");
+              mainContent.classList.toggle("ml-64");
+            }
+          });
+        }
+
+        // 监听窗口大小变化，调整侧边栏
+        window.addEventListener("resize", function () {
+          if (window.innerWidth >= 1024) {
+            sidebar.classList.remove("-translate-x-full");
+            mainContent.classList.remove("ml-0");
+            mainContent.classList.add("ml-64");
+          } else if (!sidebar.classList.contains("sidebar-open")) {
+            sidebar.classList.add("-translate-x-full");
+            mainContent.classList.remove("ml-64");
+            mainContent.classList.add("ml-0");
+          }
+        });
+
+        // 模型选择
+        const modelCards = document.querySelectorAll(".model-card");
+        modelCards.forEach((card) => {
+          card.addEventListener("click", function () {
+            modelCards.forEach((c) => c.classList.remove("border-primary"));
+            modelCards.forEach((c) => c.classList.add("border-transparent"));
+            this.classList.remove("border-transparent");
+            this.classList.add("border-primary");
+
+            // 根据选择的模型显示不同的参数设置
+            const modelType = this.getAttribute("data-model");
+            showModelParams(modelType);
+          });
+        });
+
+        // 显示模型参数设置
+        function showModelParams(modelType) {
+          // 这里可以根据不同模型类型显示不同的参数设置表单
+          console.log(`显示${modelType}模型的参数设置`);
+          // 示例：只显示Transformer参数，实际应用中应该根据modelType动态加载不同的参数表单
+          const transformerParams =
+            document.getElementById("transformerParams");
+          if (transformerParams) {
+            if (modelType === "transformer") {
+              transformerParams.classList.remove("hidden");
+            } else {
+              transformerParams.classList.add("hidden");
+            }
+          }
+        }
+
+        // 开始训练按钮点击事件
+        const startTrainingBtn = document.getElementById("startTraining");
+        const trainingProgress = document.getElementById("trainingProgress");
+        const trainingResults = document.getElementById("trainingResults");
+
+        if (startTrainingBtn) {
+          startTrainingBtn.addEventListener("click", function () {
+            // 显示训练进度面板
+            if (trainingProgress) trainingProgress.classList.remove("hidden");
+
+            // 模拟训练进度
+            simulateTraining();
+          });
+        }
+
+        // 取消训练按钮点击事件
+        const cancelTrainingBtn = document.getElementById("cancelTraining");
+        if (cancelTrainingBtn) {
+          cancelTrainingBtn.addEventListener("click", function () {
+            // 隐藏训练进度面板
+            if (trainingProgress) trainingProgress.classList.add("hidden");
+
+            // 重置训练进度
+            resetTrainingProgress();
+          });
+        }
+
+        // 保存模型按钮点击事件
+        const saveModelBtn = document.getElementById("saveModel");
+        if (saveModelBtn) {
+          saveModelBtn.addEventListener("click", function () {
+            // 这里应该调用后端API保存模型
+            alert("模型已成功保存到模型库！");
+          });
+        }
+
+        // 新训练按钮点击事件
+        const newTrainingBtn = document.getElementById("newTraining");
+        if (newTrainingBtn) {
+          newTrainingBtn.addEventListener("click", function () {
+            // 隐藏训练结果面板
+            if (trainingResults) trainingResults.classList.add("hidden");
+
+            // 重置训练进度
+            resetTrainingProgress();
+          });
+        }
+
+        // 模拟训练进度
+        function simulateTraining() {
+          const trainingLogs = document.getElementById("trainingLogs");
+          const overallProgressBar =
+            document.getElementById("overallProgressBar");
+          const overallProgressText = document.getElementById(
+            "overallProgressText"
+          );
+          const epochProgressBar = document.getElementById("epochProgressBar");
+          const epochProgressText =
+            document.getElementById("epochProgressText");
+          const currentEpochText = document.getElementById("currentEpochText");
+
+          if (
+            !trainingLogs ||
+            !overallProgressBar ||
+            !overallProgressText ||
+            !epochProgressBar ||
+            !epochProgressText ||
+            !currentEpochText
+          ) {
+            return;
+          }
+
+          // 清空日志
+          trainingLogs.innerHTML =
+            '<p class="text-sm text-gray-dark">开始数据预处理...</p>';
+
+          let overallProgress = 0;
+          const totalEpochs = 50;
+          let currentEpoch = 0;
+
+          // 模拟训练过程
+          const trainingInterval = setInterval(() => {
+            overallProgress += 1;
+            overallProgressBar.style.width = `${overallProgress}%`;
+            overallProgressText.textContent = `${overallProgress}%`;
+
+            // 模拟每个epoch的进度
+            const epochProgress = (overallProgress % 2) * 50;
+            epochProgressBar.style.width = `${epochProgress}%`;
+            epochProgressText.textContent = `${epochProgress}%`;
+
+            // 更新当前epoch
+            if (overallProgress % 2 === 0) {
+              currentEpoch = Math.floor(overallProgress / 2) + 1;
+              currentEpochText.textContent = `Epoch ${currentEpoch}/${totalEpochs}`;
+
+              // 添加日志
+              const loss = (0.01 - currentEpoch * 0.00018).toFixed(4);
+              const logEntry = document.createElement("p");
+              logEntry.className = "text-sm text-gray-dark mt-1";
+              logEntry.textContent = `Epoch ${currentEpoch}/${totalEpochs}, Loss: ${loss}`;
+              trainingLogs.appendChild(logEntry);
+              trainingLogs.scrollTop = trainingLogs.scrollHeight;
+            }
+
+            // 训练完成
+            if (overallProgress >= 100) {
+              clearInterval(trainingInterval);
+
+              // 添加最终日志
+              const logEntry = document.createElement("p");
+              logEntry.className = "text-sm text-green-600 mt-1";
+              logEntry.textContent = "训练完成！";
+              trainingLogs.appendChild(logEntry);
+              trainingLogs.scrollTop = trainingLogs.scrollHeight;
+
+              // 显示训练结果
+              setTimeout(() => {
+                if (trainingProgress) trainingProgress.classList.add("hidden");
+                if (trainingResults) trainingResults.classList.remove("hidden");
+                initResultCharts();
+              }, 1000);
+            }
+          }, 200);
+        }
+
+        // 重置训练进度
+        function resetTrainingProgress() {
+          const overallProgressBar =
+            document.getElementById("overallProgressBar");
+          const overallProgressText = document.getElementById(
+            "overallProgressText"
+          );
+          const epochProgressBar = document.getElementById("epochProgressBar");
+          const epochProgressText =
+            document.getElementById("epochProgressText");
+          const currentEpochText = document.getElementById("currentEpochText");
+
+          if (overallProgressBar) overallProgressBar.style.width = "0%";
+          if (overallProgressText) overallProgressText.textContent = "0%";
+          if (epochProgressBar) epochProgressBar.style.width = "0%";
+          if (epochProgressText) epochProgressText.textContent = "0%";
+          if (currentEpochText) currentEpochText.textContent = "Epoch 1/50";
+        }
+
+        // 初始化结果图表
+        function initResultCharts() {
+          // 损失曲线
+          const lossCtx = document.getElementById("lossChart");
+          if (lossCtx) {
+            new Chart(lossCtx, {
+              type: "line",
+              data: {
+                labels: Array.from({ length: 50 }, (_, i) => i + 1),
+                datasets: [
+                  {
+                    label: "训练损失",
+                    data: [
+                      0.0095, 0.0082, 0.0071, 0.0063, 0.0056, 0.0051, 0.0046,
+                      0.0042, 0.0039, 0.0036, 0.0033, 0.0031, 0.0029, 0.0027,
+                      0.0025, 0.0024, 0.0023, 0.0022, 0.0021, 0.002, 0.0019,
+                      0.0018, 0.0017, 0.0017, 0.0016, 0.0016, 0.0015, 0.0015,
+                      0.0014, 0.0014, 0.0014, 0.0013, 0.0013, 0.0013, 0.0012,
+                      0.0012, 0.0012, 0.0012, 0.0011, 0.0011, 0.0011, 0.0011,
+                      0.001, 0.001, 0.001, 0.001, 0.0009,
+                    ],
+                    borderColor: "#165DFF",
+                    backgroundColor: "rgba(22, 93, 255, 0.1)",
+                    tension: 0.4,
+                    fill: true,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "top",
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: "损失值",
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "Epoch",
+                    },
+                  },
+                },
+              },
+            });
+          }
+
+          // 预测结果图表
+          const predictionCtx = document.getElementById("predictionChart");
+          if (predictionCtx) {
+            // 生成模拟数据
+            const xValues = Array.from({ length: 100 }, (_, i) => i);
+            const actualValues = xValues.map(
+              (x) => Math.sin(x / 10) * 10 + 50 + Math.random() * 5
+            );
+            const predictedValues = actualValues.map(
+              (v) => v + (Math.random() * 2 - 1)
+            );
+
+            new Chart(predictionCtx, {
+              type: "line",
+              data: {
+                labels: xValues,
+                datasets: [
+                  {
+                    label: "真实值",
+                    data: actualValues,
+                    borderColor: "#1D2129",
+                    backgroundColor: "rgba(29, 33, 41, 0.1)",
+                    tension: 0.4,
+                    fill: false,
+                  },
+                  {
+                    label: "预测值",
+                    data: predictedValues,
+                    borderColor: "#722ED1",
+                    backgroundColor: "rgba(114, 46, 209, 0.1)",
+                    tension: 0.4,
+                    fill: false,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "top",
+                  },
+                },
+                scales: {
+                  y: {
+                    title: {
+                      display: true,
+                      text: "负荷值",
+                    },
+                  },
+                  x: {
+                    title: {
+                      display: true,
+                      text: "时间",
+                    },
+                  },
+                },
+              },
+            });
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
